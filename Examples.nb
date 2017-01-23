@@ -1,0 +1,1375 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     47761,       1367]
+NotebookOptionsPosition[     44405,       1256]
+NotebookOutlinePosition[     44872,       1274]
+CellTagsIndexPosition[     44829,       1271]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"Quit", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.692513167819683*^9, 3.6925131685432577`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"SetDirectory", "[", 
+   RowBox[{"NotebookDirectory", "[", "]"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"<<", "\"\<MultivariateResidues`\>\""}]}], "Input",
+ CellChangeTimes->{{3.691410498135199*^9, 3.6914105193420887`*^9}}],
+
+Cell[BoxData["\<\"MultivariateResidues, Kasper J. Larsen and Robbert Rietkerk \
+(2017)\"\>"], "Print",
+ CellChangeTimes->{3.6925136188192797`*^9, 3.692513657932212*^9, 
+  3.692513720379616*^9, 3.693833179521821*^9, 3.693833319439658*^9, 
+  3.693833668180097*^9, 3.693834850617262*^9, 3.693840476568679*^9, 
+  3.693840721673686*^9, 3.6939162283036423`*^9, 3.693919467171093*^9, 
+  3.69392243577722*^9, 3.693922691172492*^9, 3.69392280554921*^9, 
+  3.693922969341074*^9, 3.6939230840646877`*^9, 3.694151935562093*^9, 
+  3.694154131455226*^9, 3.69415421404795*^9, 3.694166399240287*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "MultivariateResidues`*"}]], "Input",
+ CellChangeTimes->{{3.69141053136873*^9, 3.6914105313703938`*^9}}],
+
+Cell[BoxData[
+ DynamicModuleBox[{Typeset`open$$ = True}, 
+  PaneSelectorBox[{False->
+   RowBox[{
+    OpenerBox[Dynamic[Typeset`open$$],
+     ImageSize->Small], 
+    StyleBox["MultivariateResidues`", "InfoHeading"]}], True->GridBox[{
+     {
+      RowBox[{
+       OpenerBox[Dynamic[Typeset`open$$],
+        ImageSize->Small], 
+       StyleBox["MultivariateResidues`", "InfoHeading"]}]},
+     {GridBox[{
+        {
+         ButtonBox["FindMinimumDelta",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info3694155536-5387578", {
+            "FindMinimumDelta", "MultivariateResidues`"}},
+          ButtonNote->"MultivariateResidues`"], 
+         ButtonBox["$MultiResInputChecks",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info3694155536-5387578", {
+            "$MultiResInputChecks", "MultivariateResidues`"}},
+          ButtonNote->"MultivariateResidues`"], 
+         ButtonBox["$MultiResSingularPath",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info3694155536-5387578", {
+            "$MultiResSingularPath", "MultivariateResidues`"}},
+          ButtonNote->"MultivariateResidues`"]},
+        {
+         ButtonBox["MultivariateResidue",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info3694155536-5387578", {
+            "MultivariateResidue", "MultivariateResidues`"}},
+          ButtonNote->"MultivariateResidues`"], 
+         ButtonBox["$MultiResInternalChecks",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info3694155536-5387578", {
+            "$MultiResInternalChecks", "MultivariateResidues`"}},
+          ButtonNote->"MultivariateResidues`"], 
+         ButtonBox["$MultiResUseSingular",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info3694155536-5387578", {
+            "$MultiResUseSingular", "MultivariateResidues`"}},
+          ButtonNote->"MultivariateResidues`"]}
+       },
+       DefaultBaseStyle->"InfoGrid",
+       GridBoxItemSize->{"Columns" -> {{
+            Scaled[0.31666666666666665`]}}}]}
+    },
+    GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
+   Dynamic[Typeset`open$$],
+   ImageSize->Automatic]]], "Print", "InfoCell",
+ CellChangeTimes->{3.694151936930356*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["New function", "Subsection",
+ CellChangeTimes->{{3.691415892046155*^9, 3.691415895652322*^9}, 
+   3.69243559607235*^9}],
+
+Cell["\<\
+In the univariate case, MultivariateResidue is equivalent to the native \
+Mathematica function Residue. For instance,\
+\>", "Text",
+ CellChangeTimes->{{3.692435676388291*^9, 3.692435730586062*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"MultivariateResidue", "[", 
+  RowBox[{
+   RowBox[{"f", "[", "z", "]"}], ",", 
+   RowBox[{"{", "z", "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"z", "\[Rule]", "0"}], "}"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Residue", "[", 
+  RowBox[{
+   FractionBox[
+    RowBox[{"f", "[", "z", "]"}], "z"], ",", 
+   RowBox[{"{", 
+    RowBox[{"z", ",", "0"}], "}"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.691410546103413*^9, 3.6914105625265408`*^9}, {
+  3.6914106130874157`*^9, 3.691410620795192*^9}}],
+
+Cell[BoxData[
+ RowBox[{"f", "[", "0", "]"}]], "Output",
+ CellChangeTimes->{
+  3.691410564274232*^9, {3.691410607505493*^9, 3.69141062135575*^9}, 
+   3.692435605690854*^9, 3.692436348013977*^9, 3.69243638225528*^9, 
+   3.692439706424049*^9, 3.6938331875200367`*^9}],
+
+Cell[BoxData[
+ RowBox[{"f", "[", "0", "]"}]], "Output",
+ CellChangeTimes->{
+  3.691410564274232*^9, {3.691410607505493*^9, 3.69141062135575*^9}, 
+   3.692435605690854*^9, 3.692436348013977*^9, 3.69243638225528*^9, 
+   3.692439706424049*^9, 3.6938331875221233`*^9}]
+}, Open  ]],
+
+Cell["\<\
+As a multivariate example, let us compute the residues considered in section \
+2.1 of the accompanying paper. Taking \[CurlyPhi]_1, \[CurlyPhi]_2 and \
+\[CurlyPhi]_3 from eq. (10), we can straightforwardly compute the residues \
+with respect to the ideals given in eq. (11) as follows:\
+\>", "Text",
+ CellChangeTimes->{{3.692514994502585*^9, 3.692515088677052*^9}, {
+  3.692515135782708*^9, 3.692515141024228*^9}, {3.694166495918768*^9, 
+  3.6941665031789355`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"f", "[", "1", "]"}], "=", 
+   RowBox[{"z", "[", "2", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"f", "[", "2", "]"}], "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"a", "[", "1", "]"}], " ", 
+     RowBox[{"z", "[", "1", "]"}]}], "+", 
+    RowBox[{
+     RowBox[{"a", "[", "2", "]"}], " ", 
+     RowBox[{"z", "[", "2", "]"}]}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"f", "[", "3", "]"}], "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"b", "[", "1", "]"}], " ", 
+     RowBox[{"z", "[", "1", "]"}]}], "+", 
+    RowBox[{
+     RowBox[{"b", "[", "2", "]"}], " ", 
+     RowBox[{"z", "[", "2", "]"}]}]}]}], ";"}], "\n", 
+ RowBox[{"MultivariateResidue", "[", 
+  RowBox[{
+   RowBox[{"z", "[", "1", "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"f", "[", "1", "]"}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", "2", "]"}], "*", 
+      RowBox[{"f", "[", "3", "]"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"z", "[", "1", "]"}], "\[Rule]", "0"}], ",", 
+     RowBox[{
+      RowBox[{"z", "[", "2", "]"}], "\[Rule]", "0"}]}], "}"}]}], 
+  "]"}], "\n", 
+ RowBox[{"MultivariateResidue", "[", 
+  RowBox[{
+   RowBox[{"z", "[", "1", "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"f", "[", "2", "]"}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", "3", "]"}], "*", 
+      RowBox[{"f", "[", "1", "]"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"z", "[", "1", "]"}], "\[Rule]", "0"}], ",", 
+     RowBox[{
+      RowBox[{"z", "[", "2", "]"}], "\[Rule]", "0"}]}], "}"}]}], 
+  "]"}], "\n", 
+ RowBox[{"MultivariateResidue", "[", 
+  RowBox[{
+   RowBox[{"z", "[", "1", "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"f", "[", "3", "]"}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", "1", "]"}], "*", 
+      RowBox[{"f", "[", "2", "]"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"z", "[", "1", "]"}], "\[Rule]", "0"}], ",", 
+     RowBox[{
+      RowBox[{"z", "[", "2", "]"}], "\[Rule]", "0"}]}], "}"}]}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.691411312794065*^9, 3.691411341056925*^9}, {
+   3.691411381626007*^9, 3.691411383523394*^9}, 3.6924356202581053`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox["1", 
+   RowBox[{
+    RowBox[{"a", "[", "1", "]"}], " ", 
+    RowBox[{"b", "[", "1", "]"}]}]]}]], "Output",
+ CellChangeTimes->{{3.691411320476701*^9, 3.691411343256422*^9}, 
+   3.692435620793009*^9, 3.692436348118577*^9, 3.692436384189535*^9, 
+   3.692439707975482*^9, 3.693833189240749*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"a", "[", "2", "]"}], 
+   RowBox[{
+    RowBox[{"a", "[", "1", "]"}], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{"a", "[", "2", "]"}]}], " ", 
+       RowBox[{"b", "[", "1", "]"}]}], "+", 
+      RowBox[{
+       RowBox[{"a", "[", "1", "]"}], " ", 
+       RowBox[{"b", "[", "2", "]"}]}]}], ")"}]}]]}]], "Output",
+ CellChangeTimes->{{3.691411320476701*^9, 3.691411343256422*^9}, 
+   3.692435620793009*^9, 3.692436348118577*^9, 3.692436384189535*^9, 
+   3.692439707975482*^9, 3.693833189274761*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"b", "[", "2", "]"}], 
+   RowBox[{
+    RowBox[{"b", "[", "1", "]"}], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"a", "[", "2", "]"}], " ", 
+       RowBox[{"b", "[", "1", "]"}]}], "-", 
+      RowBox[{
+       RowBox[{"a", "[", "1", "]"}], " ", 
+       RowBox[{"b", "[", "2", "]"}]}]}], ")"}]}]]}]], "Output",
+ CellChangeTimes->{{3.691411320476701*^9, 3.691411343256422*^9}, 
+   3.692435620793009*^9, 3.692436348118577*^9, 3.692436384189535*^9, 
+   3.692439707975482*^9, 3.6938331893301897`*^9}]
+}, Open  ]],
+
+Cell["\<\
+When using the second syntax, the input list of poles does not have to \
+contain all points in the variety defined by the ideal (i.e., the set of \
+points where all denominator factors vanish). Moreover, it may contain \
+additional points (although the corresponding residues will be zero). As an \
+example, consider the following ideal,\
+\>", "Text",
+ CellChangeTimes->{3.692435719210285*^9}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Ideal", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"z", "[", "1", "]"}], "^", "2"}], " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"z", "[", "1", "]"}], "-", 
+        RowBox[{"z", "[", "2", "]"}]}], ")"}]}], ",", 
+     RowBox[{
+      RowBox[{"z", "[", "3", "]"}], "^", "3"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"z", "[", "2", "]"}], "^", "3"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "1"}], "-", 
+        RowBox[{"z", "[", "1", "]"}], "-", 
+        RowBox[{"a", " ", 
+         RowBox[{"z", "[", "1", "]"}]}], "+", 
+        RowBox[{"z", "[", "2", "]"}], "+", 
+        RowBox[{"a", " ", 
+         RowBox[{"z", "[", "1", "]"}], " ", 
+         RowBox[{"z", "[", "3", "]"}]}]}], ")"}]}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Parameters", "=", 
+   RowBox[{"{", "a", "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Vars", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"z", "[", "1", "]"}], ",", 
+     RowBox[{"z", "[", "2", "]"}], ",", 
+     RowBox[{"z", "[", "3", "]"}]}], "}"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.6914115741698513`*^9, 3.6914116542208357`*^9}, {
+  3.691411843535255*^9, 3.691411854396575*^9}, {3.691411931246294*^9, 
+  3.691411934370378*^9}, {3.691412055881947*^9, 3.691412056186757*^9}, {
+  3.6914159337892513`*^9, 3.69141595767474*^9}}],
+
+Cell["The resulting variety contains three points,", "Text",
+ CellChangeTimes->{3.692435744036729*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Variety", "=", 
+  RowBox[{"Map", "[", 
+   RowBox[{"Last", ",", 
+    RowBox[{"Sort", "[", 
+     RowBox[{"Solve", "[", 
+      RowBox[{
+       RowBox[{"Ideal", "\[Equal]", "0"}], ",", "Vars"}], "]"}], "]"}], ",", 
+    RowBox[{"{", "2", "}"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.691412061921904*^9, 3.691412065661186*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "1"}], ",", "0", ",", "0"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "1", ",", "0"}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.691412066894911*^9, 3.69141661154737*^9, 
+  3.691417193331414*^9, 3.69243562811637*^9, 3.692436348246643*^9, 
+  3.692436388621929*^9, 3.692439712293515*^9, 3.693833214184181*^9}]
+}, Open  ]],
+
+Cell["\<\
+We may ask for the residue computed at precisely the poles contained in the \
+variety, or alternatively a subset, or alternatively a subset with an added \
+random point,\
+\>", "Text",
+ CellChangeTimes->{
+  3.692435752062818*^9, {3.693833237079547*^9, 3.6938332476730957`*^9}, 
+   3.6941666192717395`*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"MultivariateResidue", "[", 
+  RowBox[{"1", ",", "Ideal", ",", "Vars", ",", "Variety"}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"MultivariateResidue", "[", 
+  RowBox[{"1", ",", "Ideal", ",", "Vars", ",", 
+   RowBox[{"Variety", "[", 
+    RowBox[{"[", 
+     RowBox[{"1", ";;", "2"}], "]"}], "]"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"MultivariateResidue", "[", 
+  RowBox[{"1", ",", "Ideal", ",", "Vars", ",", 
+   RowBox[{"Join", "[", 
+    RowBox[{
+     RowBox[{"Variety", "[", 
+      RowBox[{"[", 
+       RowBox[{"1", ";;", "2"}], "]"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"{", 
+       RowBox[{"0", ",", "0", ",", "1"}], "}"}], "}"}]}], "]"}]}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.6914121014040613`*^9, 3.691412104667852*^9}, {
+  3.693833227426511*^9, 3.693833231690619*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"-", 
+    FractionBox["6", "a"]}], ",", "0", ",", 
+   FractionBox["6", "a"]}], "}"}]], "Output",
+ CellChangeTimes->{3.693833252705131*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"-", 
+    FractionBox["6", "a"]}], ",", "0"}], "}"}]], "Output",
+ CellChangeTimes->{3.6938332529979973`*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"-", 
+    FractionBox["6", "a"]}], ",", "0", ",", "0"}], "}"}]], "Output",
+ CellChangeTimes->{3.6938332533210897`*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Performance", "Subsection",
+ CellChangeTimes->{{3.691415892046155*^9, 3.691415914364788*^9}, 
+   3.6925119758030663`*^9}],
+
+Cell["\<\
+The default method \[OpenCurlyDoubleQuote]TransformationFormula\
+\[CloseCurlyDoubleQuote] is typically the best choice for simple problems, \
+whereas the sophisticated \[OpenCurlyDoubleQuote]QuotientRingDuality\
+\[CloseCurlyDoubleQuote] can offer speed improvements in more involved \
+computations. For instance, the default method is the fastest method for the \
+residue computation with the simple ideal defined above,\
+\>", "Text",
+ CellChangeTimes->{{3.692435782062469*^9, 3.6924357895764914`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Ideal", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"z", "[", "1", "]"}], "^", "2"}], " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"z", "[", "1", "]"}], "-", 
+        RowBox[{"z", "[", "2", "]"}]}], ")"}]}], ",", 
+     RowBox[{
+      RowBox[{"z", "[", "3", "]"}], "^", "3"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"z", "[", "2", "]"}], "^", "3"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "1"}], "-", 
+        RowBox[{"z", "[", "1", "]"}], "-", 
+        RowBox[{"a", " ", 
+         RowBox[{"z", "[", "1", "]"}]}], "+", 
+        RowBox[{"z", "[", "2", "]"}], "+", 
+        RowBox[{"a", " ", 
+         RowBox[{"z", "[", "1", "]"}], " ", 
+         RowBox[{"z", "[", "3", "]"}]}]}], ")"}]}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Vars", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"z", "[", "1", "]"}], ",", 
+     RowBox[{"z", "[", "2", "]"}], ",", 
+     RowBox[{"z", "[", "3", "]"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Variety", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{"Last", ",", 
+     RowBox[{"Sort", "[", 
+      RowBox[{"Solve", "[", 
+       RowBox[{
+        RowBox[{"Ideal", "\[Equal]", "0"}], ",", "Vars"}], "]"}], "]"}], ",", 
+     
+     RowBox[{"{", "2", "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"First", "[", 
+  RowBox[{"AbsoluteTiming", "[", 
+   RowBox[{"MultivariateResidue", "[", 
+    RowBox[{"1", ",", "Ideal", ",", "Vars", ",", "Variety", ",", 
+     RowBox[{"Method", "\[Rule]", "\"\<TransformationFormula\>\""}]}], "]"}], 
+   "]"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"First", "[", 
+  RowBox[{"AbsoluteTiming", "[", 
+   RowBox[{"MultivariateResidue", "[", 
+    RowBox[{"1", ",", "Ideal", ",", "Vars", ",", "Variety", ",", 
+     RowBox[{"Method", "\[Rule]", "\"\<QuotientRingDuality\>\""}]}], "]"}], 
+   "]"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.691415732125646*^9, 3.6914157578880463`*^9}, {
+   3.6914164969540367`*^9, 3.6914165070073757`*^9}, {3.6924358495192423`*^9, 
+   3.692435850026085*^9}, {3.693916296637321*^9, 3.693916319282542*^9}, 
+   3.693916350263483*^9, {3.693917032722293*^9, 3.693917032892478*^9}, {
+   3.694153635885496*^9, 3.694153636113634*^9}}],
+
+Cell[BoxData["0.25593100000000001958966322490596212447`5.428722806878947"], \
+"Output",
+ CellChangeTimes->{
+  3.6924364035103292`*^9, 3.692439719346375*^9, 3.693833266412072*^9, 
+   3.6938333256381598`*^9, 3.6938336751584377`*^9, 3.693840479590496*^9, 
+   3.693840725573667*^9, 3.693916238313558*^9, {3.693916294273912*^9, 
+   3.693916320169683*^9}, 3.693916352460538*^9, 3.693917033796026*^9, 
+   3.694154135696888*^9}],
+
+Cell[BoxData["4.14754399999999989745447237510234117508`6.638390915295092"], \
+"Output",
+ CellChangeTimes->{
+  3.6924364035103292`*^9, 3.692439719346375*^9, 3.693833266412072*^9, 
+   3.6938333256381598`*^9, 3.6938336751584377`*^9, 3.693840479590496*^9, 
+   3.693840725573667*^9, 3.693916238313558*^9, {3.693916294273912*^9, 
+   3.693916320169683*^9}, 3.693916352460538*^9, 3.693917033796026*^9, 
+   3.694154139845407*^9}]
+}, Open  ]],
+
+Cell["\<\
+On the other hand, if we consider an example with more variables, then the \
+default method becomes less efficient (due to the costly computation of the \
+transformation matrix) and one might opt for \
+\[OpenCurlyDoubleQuote]QuotientRingDuality\[CloseCurlyDoubleQuote],\
+\>", "Text",
+ CellChangeTimes->{
+  3.692435833853712*^9, {3.694153767045673*^9, 3.694153770668885*^9}, 
+   3.694153838877179*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"n", "=", "10"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Ideal", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"z", "[", "i", "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "1", ",", "n"}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Vars", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"z", "[", "i", "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "1", ",", "n"}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Variety", "=", 
+   RowBox[{"{", 
+    RowBox[{"Table", "[", 
+     RowBox[{"0", ",", 
+      RowBox[{"{", "n", "}"}]}], "]"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"First", "[", 
+  RowBox[{"AbsoluteTiming", "[", 
+   RowBox[{"MultivariateResidue", "[", 
+    RowBox[{"1", ",", "Ideal", ",", "Vars", ",", "Variety", ",", 
+     RowBox[{"Method", "\[Rule]", "\"\<TransformationFormula\>\""}]}], "]"}], 
+   "]"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"First", "[", 
+  RowBox[{"AbsoluteTiming", "[", 
+   RowBox[{"MultivariateResidue", "[", 
+    RowBox[{"1", ",", "Ideal", ",", "Vars", ",", "Variety", ",", 
+     RowBox[{"Method", "\[Rule]", "\"\<QuotientRingDuality\>\""}]}], "]"}], 
+   "]"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.6914157872818613`*^9, 3.69141584679272*^9}, {
+  3.691416656187023*^9, 3.691416733242173*^9}, {3.691416810626006*^9, 
+  3.691416811962893*^9}, {3.6914170610089827`*^9, 3.6914170707176*^9}}],
+
+Cell[BoxData["1.02921799999999996622079834196483716369`6.033107286263246"], \
+"Output",
+ CellChangeTimes->{{3.691416651049972*^9, 3.691416762936449*^9}, 
+   3.692350212118659*^9, 3.69243635269541*^9, 3.692436409352708*^9, 
+   3.6924397264109087`*^9, 3.6938333513661633`*^9, 3.693833681190374*^9, 
+   3.6938407974509974`*^9, 3.693917184458188*^9, 3.694154160524438*^9}],
+
+Cell[BoxData["0.1232570000000000054463100696011679247`5.111411506340828"], \
+"Output",
+ CellChangeTimes->{{3.691416651049972*^9, 3.691416762936449*^9}, 
+   3.692350212118659*^9, 3.69243635269541*^9, 3.692436409352708*^9, 
+   3.6924397264109087`*^9, 3.6938333513661633`*^9, 3.693833681190374*^9, 
+   3.6938407974509974`*^9, 3.693917184458188*^9, 3.694154160649042*^9}]
+}, Open  ]],
+
+Cell["\<\
+Another circumstance under which \[OpenCurlyDoubleQuote]QuotientRingDuality\
+\[CloseCurlyDoubleQuote] performs better than \
+\[OpenCurlyDoubleQuote]TransformationFormula\[CloseCurlyDoubleQuote] is when \
+points in the variety are large rational functions of one or more parameters. \
+In such cases, the computation of Groebner bases in \
+\[OpenCurlyDoubleQuote]TransformationFormula\[CloseCurlyDoubleQuote] can be \
+rather slow. The following example with two complex variables illustrates \
+this point.\
+\>", "Text",
+ CellChangeTimes->{{3.69243588485331*^9, 3.692435907181774*^9}, 
+   3.694152621309338*^9, {3.694166408087942*^9, 3.6941664090126276`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Ideal", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{
+         RowBox[{"c", "[", "1", "]"}], " ", 
+         RowBox[{"z", "[", "1", "]"}]}], "+", 
+        RowBox[{
+         RowBox[{"c", "[", "2", "]"}], " ", 
+         RowBox[{"z", "[", "2", "]"}]}]}], ")"}], "^", "2"}], ",", 
+     RowBox[{"1", "+", 
+      RowBox[{
+       RowBox[{"c", "[", "3", "]"}], " ", 
+       RowBox[{"z", "[", "1", "]"}]}], "+", 
+      RowBox[{
+       RowBox[{"c", "[", "4", "]"}], " ", 
+       RowBox[{"z", "[", "2", "]"}]}]}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Vars", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"z", "[", "1", "]"}], ",", 
+     RowBox[{"z", "[", "2", "]"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Variety", "=", 
+  RowBox[{"Map", "[", 
+   RowBox[{"Last", ",", 
+    RowBox[{"Sort", "[", 
+     RowBox[{"Solve", "[", 
+      RowBox[{
+       RowBox[{"Ideal", "\[Equal]", "0"}], ",", "Vars"}], "]"}], "]"}], ",", 
+    RowBox[{"{", "2", "}"}]}], "]"}]}]}], "Input",
+ CellChangeTimes->{{3.692355808477833*^9, 3.692355810607168*^9}, {
+   3.692355842454673*^9, 3.69235585069173*^9}, {3.692355899976213*^9, 
+   3.692355927847639*^9}, 3.692355959696629*^9, 3.69235651155163*^9, {
+   3.69243592659612*^9, 3.692435934373673*^9}, {3.693922470596258*^9, 
+   3.693922548501629*^9}, {3.693922663690174*^9, 3.693922674877206*^9}, {
+   3.693922774035997*^9, 3.693922797555978*^9}, {3.6939229745429907`*^9, 
+   3.6939229857896833`*^9}, 3.693923022357265*^9, {3.693923093491363*^9, 
+   3.6939231000166683`*^9}, {3.6939231836159573`*^9, 3.693923185352992*^9}, {
+   3.693923333624477*^9, 3.693923334162328*^9}, {3.694152624031461*^9, 
+   3.694152626566757*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"-", 
+     FractionBox[
+      RowBox[{
+       RowBox[{"c", "[", "2", "]"}], "-", 
+       RowBox[{"c", "[", "4", "]"}]}], 
+      RowBox[{
+       RowBox[{
+        RowBox[{"c", "[", "2", "]"}], " ", 
+        RowBox[{"c", "[", "3", "]"}]}], "-", 
+       RowBox[{
+        RowBox[{"c", "[", "1", "]"}], " ", 
+        RowBox[{"c", "[", "4", "]"}]}]}]]}], ",", 
+    RowBox[{"-", 
+     FractionBox[
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{"c", "[", "1", "]"}]}], "+", 
+       RowBox[{"c", "[", "3", "]"}]}], 
+      RowBox[{
+       RowBox[{
+        RowBox[{"c", "[", "2", "]"}], " ", 
+        RowBox[{"c", "[", "3", "]"}]}], "-", 
+       RowBox[{
+        RowBox[{"c", "[", "1", "]"}], " ", 
+        RowBox[{"c", "[", "4", "]"}]}]}]]}]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{{3.6923558185419283`*^9, 3.69235583618962*^9}, {
+   3.692355900368741*^9, 3.692355931627988*^9}, {3.692355963725348*^9, 
+   3.6923559752020903`*^9}, 3.692356051672894*^9, 3.692356520504552*^9, 
+   3.6923578807048483`*^9, 3.692420858883772*^9, 3.6924209002488937`*^9, 
+   3.692421127238077*^9, 3.6924235420288897`*^9, 3.692436352978455*^9, 
+   3.692436416388939*^9, 3.692439729773966*^9, 3.69383336207726*^9, 
+   3.693833685344577*^9, 3.6939194736271048`*^9, 3.693922443563242*^9, 
+   3.69392254915704*^9, {3.693922666542145*^9, 3.693922696371393*^9}, {
+   3.693922779494012*^9, 3.693922817732657*^9}, {3.693923016497724*^9, 
+   3.693923022698571*^9}, 3.6939231010163593`*^9, 3.6939231868223*^9, 
+   3.693923334765929*^9, 3.694152629532733*^9, 3.694154187654456*^9, 
+   3.694154221321598*^9}]
+}, Open  ]],
+
+Cell["\<\
+Since this variety is a rational function of coefficients c(i), \
+\>", "Text",
+ CellChangeTimes->{
+  3.6924359169152527`*^9, {3.694152647620246*^9, 3.694152660131195*^9}, {
+   3.6941664156143627`*^9, 3.694166415834919*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"First", "[", 
+  RowBox[{"AbsoluteTiming", "[", 
+   RowBox[{"MultivariateResidue", "[", 
+    RowBox[{"1", ",", "Ideal", ",", "Vars", ",", "Variety", ",", 
+     RowBox[{"Method", "\[Rule]", "\"\<TransformationFormula\>\""}]}], "]"}], 
+   "]"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"First", "[", 
+  RowBox[{"AbsoluteTiming", "[", 
+   RowBox[{"MultivariateResidue", "[", 
+    RowBox[{"1", ",", "Ideal", ",", "Vars", ",", "Variety", ",", 
+     RowBox[{"Method", "\[Rule]", "\"\<QuotientRingDuality\>\""}]}], "]"}], 
+   "]"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.693923191399952*^9, 3.693923193383596*^9}, {
+  3.694154207440658*^9, 3.694154208271202*^9}}],
+
+Cell[BoxData["0.15663599999999999745625700597884133458`5.215491497339629"], \
+"Output",
+ CellChangeTimes->{{3.6923558185419283`*^9, 3.69235583618962*^9}, {
+   3.692355900368741*^9, 3.692355931627988*^9}, {3.692355963725348*^9, 
+   3.6923559752020903`*^9}, 3.692356051672894*^9, 3.692356520504552*^9, 
+   3.6923578807048483`*^9, 3.692420858883772*^9, 3.6924209002488937`*^9, 
+   3.692421127238077*^9, 3.692423542176948*^9, 3.692436353124649*^9, 
+   3.69243641816722*^9, 3.692439732633407*^9, 3.6938333692738132`*^9, 
+   3.69383368706917*^9, 3.693919475320715*^9, 3.693922446176743*^9, 
+   3.6939225526637573`*^9, 3.693922698215851*^9, 3.693922819679595*^9, 
+   3.69392303670229*^9, 3.693923194202983*^9, 3.693923339069371*^9, 
+   3.694152638939549*^9, 3.694154189099297*^9, 3.6941542230516167`*^9}],
+
+Cell[BoxData["0.07485899999999999498978553447159356438`4.894843934596865"], \
+"Output",
+ CellChangeTimes->{{3.6923558185419283`*^9, 3.69235583618962*^9}, {
+   3.692355900368741*^9, 3.692355931627988*^9}, {3.692355963725348*^9, 
+   3.6923559752020903`*^9}, 3.692356051672894*^9, 3.692356520504552*^9, 
+   3.6923578807048483`*^9, 3.692420858883772*^9, 3.6924209002488937`*^9, 
+   3.692421127238077*^9, 3.692423542176948*^9, 3.692436353124649*^9, 
+   3.69243641816722*^9, 3.692439732633407*^9, 3.6938333692738132`*^9, 
+   3.69383368706917*^9, 3.693919475320715*^9, 3.693922446176743*^9, 
+   3.6939225526637573`*^9, 3.693922698215851*^9, 3.693922819679595*^9, 
+   3.69392303670229*^9, 3.693923194202983*^9, 3.693923339069371*^9, 
+   3.694152638939549*^9, 3.694154189099297*^9, 3.694154223126959*^9}]
+}, Open  ]],
+
+Cell["\<\
+The method \[OpenCurlyDoubleQuote]QuotientRingDuality\[CloseCurlyDoubleQuote] \
+allows the use of various monomial orderings in the computation of Groebner \
+bases, which can impact the speed of subsequent polynomial reductions. \
+Considering once again the ideal defined above and computing the multivariate \
+residue using three different monomial orderings,\
+\>", "Text",
+ CellChangeTimes->{
+  3.6924360983563004`*^9, {3.692454403590313*^9, 3.692454405928069*^9}, {
+   3.6941668886272583`*^9, 3.6941669089076085`*^9}, {3.694166978639553*^9, 
+   3.6941669841282787`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Ideal", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      SuperscriptBox[
+       RowBox[{"z", "[", "1", "]"}], "2"], "+", 
+      SuperscriptBox[
+       RowBox[{"z", "[", "1", "]"}], "3"], "-", 
+      RowBox[{
+       SuperscriptBox[
+        RowBox[{"z", "[", "1", "]"}], "2"], " ", 
+       RowBox[{"z", "[", "2", "]"}]}]}], ",", 
+     SuperscriptBox[
+      RowBox[{"z", "[", "3", "]"}], "3"], ",", 
+     RowBox[{
+      RowBox[{"-", 
+       SuperscriptBox[
+        RowBox[{"z", "[", "2", "]"}], "3"]}], "-", 
+      RowBox[{
+       RowBox[{"z", "[", "1", "]"}], " ", 
+       SuperscriptBox[
+        RowBox[{"z", "[", "2", "]"}], "3"]}], "-", 
+      RowBox[{"a", " ", 
+       RowBox[{"z", "[", "1", "]"}], " ", 
+       SuperscriptBox[
+        RowBox[{"z", "[", "2", "]"}], "3"]}], "+", 
+      SuperscriptBox[
+       RowBox[{"z", "[", "2", "]"}], "4"], "+", 
+      RowBox[{"a", " ", 
+       RowBox[{"z", "[", "1", "]"}], " ", 
+       SuperscriptBox[
+        RowBox[{"z", "[", "2", "]"}], "3"], " ", 
+       RowBox[{"z", "[", "3", "]"}]}]}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Vars", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"z", "[", "1", "]"}], ",", 
+     RowBox[{"z", "[", "2", "]"}], ",", 
+     RowBox[{"z", "[", "3", "]"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Variety", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{"Last", ",", 
+     RowBox[{"Sort", "[", 
+      RowBox[{"Solve", "[", 
+       RowBox[{
+        RowBox[{"Ideal", "\[Equal]", "0"}], ",", "Vars"}], "]"}], "]"}], ",", 
+     
+     RowBox[{"{", "2", "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"First", "[", 
+    RowBox[{"AbsoluteTiming", "[", 
+     RowBox[{"MultivariateResidue", "[", 
+      RowBox[{"1", ",", "Ideal", ",", "Vars", ",", "Variety", ",", 
+       RowBox[{"Method", "\[Rule]", "\"\<QuotientRingDuality\>\""}], ",", 
+       RowBox[{"MonomialOrder", "\[Rule]", "#"}]}], "]"}], "]"}], "]"}], 
+   "&"}], "/@", 
+  RowBox[{"{", 
+   RowBox[{
+   "Lexicographic", ",", "DegreeLexicographic", ",", 
+    "DegreeReverseLexicographic"}], "}"}]}]}], "Input",
+ CellChangeTimes->{{3.692429464145629*^9, 3.6924294852980556`*^9}, {
+  3.692436183532291*^9, 3.692436183999758*^9}, {3.693841335842301*^9, 
+  3.693841336307829*^9}, {3.693922052082747*^9, 3.6939220600427713`*^9}, {
+  3.694154239806438*^9, 3.694154244957315*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+  "4.1289129999999998332782524812500923872`6.636435645265978", ",", 
+   "1.45928100000000005032063654653029516339`6.184738841224431", ",", 
+   "1.73314900000000005064748620497994124889`6.259435814190971"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.692429530587101*^9, 3.692429578808209*^9, 
+  3.6924364544472017`*^9, 3.6924397646639023`*^9, 3.693833437718865*^9, 
+  3.6938405570358543`*^9, 3.693841343927751*^9, 3.693922065816745*^9, 
+  3.694154254631172*^9}]
+}, Open  ]],
+
+Cell["\<\
+shows that the options DegreeLexicographic and DegreeReverseLexicographic are \
+noticeably faster than Lexicographic.\
+\>", "Text",
+ CellChangeTimes->{3.692436144825183*^9}],
+
+Cell["\<\
+In some problems, in particular when facing many residue computations, a \
+straightforward way to decrease the total running time is by performing the \
+computations in parallel. This can be achieved by distributing the \
+definitions in MultivariateResidues` over the kernels\
+\>", "Text",
+ CellChangeTimes->{{3.694152814040856*^9, 3.694152894771407*^9}, 
+   3.694153222226097*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "DistributeDefinitions", "[", "\"\<MultivariateResidues`\>\"", "]"}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.694152847784752*^9, 3.6941528477859592`*^9}, {
+  3.6941528977883883`*^9, 3.694152956516733*^9}, {3.69415299543934*^9, 
+  3.694153062025724*^9}}],
+
+Cell["and running ParallelMap", "Text",
+ CellChangeTimes->{{3.694153224136929*^9, 3.694153225688554*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Ideal", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      SuperscriptBox[
+       RowBox[{"z", "[", "1", "]"}], "2"], "+", 
+      SuperscriptBox[
+       RowBox[{"z", "[", "1", "]"}], "3"], "-", 
+      RowBox[{
+       SuperscriptBox[
+        RowBox[{"z", "[", "1", "]"}], "2"], " ", 
+       RowBox[{"z", "[", "2", "]"}]}]}], ",", 
+     SuperscriptBox[
+      RowBox[{"z", "[", "3", "]"}], "3"], ",", 
+     RowBox[{
+      RowBox[{"-", 
+       SuperscriptBox[
+        RowBox[{"z", "[", "2", "]"}], "3"]}], "-", 
+      RowBox[{
+       RowBox[{"z", "[", "1", "]"}], " ", 
+       SuperscriptBox[
+        RowBox[{"z", "[", "2", "]"}], "3"]}], "-", 
+      RowBox[{"a", " ", 
+       RowBox[{"z", "[", "1", "]"}], " ", 
+       SuperscriptBox[
+        RowBox[{"z", "[", "2", "]"}], "3"]}], "+", 
+      SuperscriptBox[
+       RowBox[{"z", "[", "2", "]"}], "4"], "+", 
+      RowBox[{"a", " ", 
+       RowBox[{"z", "[", "1", "]"}], " ", 
+       SuperscriptBox[
+        RowBox[{"z", "[", "2", "]"}], "3"], " ", 
+       RowBox[{"z", "[", "3", "]"}]}]}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Vars", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"z", "[", "1", "]"}], ",", 
+     RowBox[{"z", "[", "2", "]"}], ",", 
+     RowBox[{"z", "[", "3", "]"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Variety", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{"Last", ",", 
+     RowBox[{"Sort", "[", 
+      RowBox[{"Solve", "[", 
+       RowBox[{
+        RowBox[{"Ideal", "\[Equal]", "0"}], ",", "Vars"}], "]"}], "]"}], ",", 
+     
+     RowBox[{"{", "2", "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Ideals", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"Ideal", "/.", 
+       RowBox[{"{", 
+        RowBox[{"a", "\[Rule]", 
+         RowBox[{"a", "[", "i", "]"}]}], "}"}]}], ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", "1", ",", "100"}], "}"}]}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"First", "[", 
+  RowBox[{"AbsoluteTiming", "[", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"MultivariateResidue", "[", 
+       RowBox[{"1", ",", "#", ",", "Vars", ",", "Variety"}], "]"}], "&"}], 
+     ",", "Ideals"}], "]"}], "]"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"First", "[", 
+  RowBox[{"AbsoluteTiming", "[", 
+   RowBox[{"ParallelMap", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"MultivariateResidue", "[", 
+       RowBox[{"1", ",", "#", ",", "Vars", ",", "Variety"}], "]"}], "&"}], 
+     ",", "Ideals"}], "]"}], "]"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.6941530681371403`*^9, 3.694153070913189*^9}, {
+  3.694153177765647*^9, 3.694153181357443*^9}, {3.69415331592023*^9, 
+  3.694153315994205*^9}, {3.694153351407453*^9, 3.694153351967383*^9}, {
+  3.69415338759339*^9, 3.694153411222684*^9}, {3.69415358220894*^9, 
+  3.694153606515921*^9}}],
+
+Cell[BoxData["27.64549200000000084287421486806124448776`7.462224236654895"], \
+"Output",
+ CellChangeTimes->{3.694153619047935*^9}],
+
+Cell[BoxData["14.54461599999999954491158860037103295326`7.1833021729787205"], \
+"Output",
+ CellChangeTimes->{3.694153633593012*^9}]
+}, Open  ]],
+
+Cell["\<\
+Finally, it is worth mentioning that multivariate residue calculations can be \
+simplified \[Dash] where possible \[Dash] by appropriate use of partial \
+fractioning. Suppose one is computing the residues of R(z_1, z_2) = (z_1 f_1 \
++ z_2 f_3)/(f_1 f_2 f_3 f_4), where f_i = a_i z_1 + b_i z_2, with respect to \
+the ideal I = \[LeftAngleBracket] f_1 f_2 , f_3 f_4 \[RightAngleBracket]. A \
+direct computation of the residue yields\
+\>", "Text",
+ CellChangeTimes->{{3.692436201246161*^9, 3.692436252522025*^9}, {
+  3.692454364124329*^9, 3.692454371439907*^9}, {3.6925120185677013`*^9, 
+  3.6925120300295877`*^9}, {3.692512139294613*^9, 3.692512148130233*^9}, {
+  3.694167065221484*^9, 3.6941670865058403`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"f", "[", "i_", "]"}], ":=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"a", "[", "i", "]"}], " ", 
+     RowBox[{"z", "[", "1", "]"}]}], "+", 
+    RowBox[{
+     RowBox[{"b", "[", "i", "]"}], " ", 
+     RowBox[{"z", "[", "2", "]"}]}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"T", "[", "1", "]"}], ",", 
+    RowBox[{"Res", "[", "1", "]"}]}], "}"}], "=", 
+  RowBox[{
+   RowBox[{"MultivariateResidue", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"z", "[", "1", "]"}], 
+       RowBox[{"f", "[", "1", "]"}]}], "+", 
+      RowBox[{
+       RowBox[{"z", "[", "2", "]"}], 
+       RowBox[{"f", "[", "3", "]"}]}]}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"f", "[", "1", "]"}], 
+        RowBox[{"f", "[", "2", "]"}]}], ",", 
+       RowBox[{
+        RowBox[{"f", "[", "3", "]"}], 
+        RowBox[{"f", "[", "4", "]"}]}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"z", "[", "1", "]"}], "\[Rule]", "0"}], ",", 
+       RowBox[{
+        RowBox[{"z", "[", "2", "]"}], "\[Rule]", "0"}]}], "}"}]}], "]"}], "//",
+    "AbsoluteTiming"}]}]}], "Input",
+ CellChangeTimes->{{3.692436279586664*^9, 3.692436279724506*^9}, {
+  3.6925120353215733`*^9, 3.692512101617773*^9}, {3.6925123104113197`*^9, 
+  3.692512317717228*^9}, {3.693833495122426*^9, 3.693833512495775*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"0.40136199999999999654676230420591309667`5.624136165408348", ",", 
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{
+      RowBox[{
+       RowBox[{"a", "[", "3", "]"}], " ", 
+       RowBox[{"a", "[", "4", "]"}], " ", 
+       RowBox[{"b", "[", "2", "]"}]}], "+", 
+      RowBox[{
+       RowBox[{"a", "[", "4", "]"}], " ", 
+       RowBox[{"b", "[", "1", "]"}], " ", 
+       RowBox[{"b", "[", "2", "]"}]}], "-", 
+      RowBox[{
+       RowBox[{"a", "[", "2", "]"}], " ", 
+       RowBox[{"a", "[", "4", "]"}], " ", 
+       RowBox[{"b", "[", "3", "]"}]}], "-", 
+      RowBox[{
+       RowBox[{"a", "[", "1", "]"}], " ", 
+       RowBox[{"b", "[", "2", "]"}], " ", 
+       RowBox[{"b", "[", "4", "]"}]}]}], 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"a", "[", "3", "]"}], " ", 
+         RowBox[{"b", "[", "2", "]"}]}], "-", 
+        RowBox[{
+         RowBox[{"a", "[", "2", "]"}], " ", 
+         RowBox[{"b", "[", "3", "]"}]}]}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"a", "[", "4", "]"}], " ", 
+         RowBox[{"b", "[", "1", "]"}]}], "-", 
+        RowBox[{
+         RowBox[{"a", "[", "1", "]"}], " ", 
+         RowBox[{"b", "[", "4", "]"}]}]}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"a", "[", "4", "]"}], " ", 
+         RowBox[{"b", "[", "2", "]"}]}], "-", 
+        RowBox[{
+         RowBox[{"a", "[", "2", "]"}], " ", 
+         RowBox[{"b", "[", "4", "]"}]}]}], ")"}]}]]}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.692512083051972*^9, 3.692512102297564*^9}, 
+   3.692512327494869*^9, 3.6938334762326202`*^9, 3.693833539661776*^9}]
+}, Open  ]],
+
+Cell["\<\
+Partial fractioning the rational function produces two terms, R(z_1,z_2) = \
+z_1/(f_2 f_3 f_4) + z_2/(f_1 f_2 f_4). The residue of each of these terms \
+should be computed with respect to the corresponding reduced ideals \
+\[LeftAngleBracket] f_2 , f_3 f_4 \[RightAngleBracket] and \
+\[LeftAngleBracket] f_1 f_2 , f_4 \[RightAngleBracket]. The sum of these two \
+residues reproduces the result of the direct computation,\
+\>", "Text",
+ CellChangeTimes->{{3.692436301803975*^9, 3.6924363257173233`*^9}, {
+  3.692453455576315*^9, 3.6924534576139507`*^9}, {3.6924543779308577`*^9, 
+  3.692454393954619*^9}, {3.692512155822443*^9, 3.692512221308514*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"T", "[", 
+     RowBox[{"2", ",", "1"}], "]"}], ",", 
+    RowBox[{"Res", "[", 
+     RowBox[{"2", ",", "1"}], "]"}]}], "}"}], "=", 
+  RowBox[{
+   RowBox[{"MultivariateResidue", "[", 
+    RowBox[{
+     RowBox[{"z", "[", "1", "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"f", "[", "2", "]"}], ",", 
+       RowBox[{
+        RowBox[{"f", "[", "3", "]"}], 
+        RowBox[{"f", "[", "4", "]"}]}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"z", "[", "1", "]"}], "\[Rule]", "0"}], ",", 
+       RowBox[{
+        RowBox[{"z", "[", "2", "]"}], "\[Rule]", "0"}]}], "}"}]}], "]"}], "//",
+    "AbsoluteTiming"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"T", "[", 
+     RowBox[{"2", ",", "2"}], "]"}], ",", 
+    RowBox[{"Res", "[", 
+     RowBox[{"2", ",", "2"}], "]"}]}], "}"}], "=", 
+  RowBox[{
+   RowBox[{"MultivariateResidue", "[", 
+    RowBox[{
+     RowBox[{"z", "[", "2", "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"f", "[", "1", "]"}], 
+        RowBox[{"f", "[", "2", "]"}]}], ",", 
+       RowBox[{"f", "[", "4", "]"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"z", "[", "1", "]"}], "\[Rule]", "0"}], ",", 
+       RowBox[{
+        RowBox[{"z", "[", "2", "]"}], "\[Rule]", "0"}]}], "}"}]}], "]"}], "//",
+    "AbsoluteTiming"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Simplify", "[", 
+  RowBox[{
+   RowBox[{"Res", "[", "1", "]"}], "\[Equal]", 
+   RowBox[{
+    RowBox[{"Res", "[", 
+     RowBox[{"2", ",", "1"}], "]"}], "+", 
+    RowBox[{"Res", "[", 
+     RowBox[{"2", ",", "2"}], "]"}]}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.692436294825466*^9, 3.6924362949612617`*^9}, {
+  3.692512112165593*^9, 3.692512127160141*^9}, {3.693833518178585*^9, 
+  3.693833537097267*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"0.04474299999999999805089245796807517763`4.671325013285337", ",", 
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{"b", "[", "2", "]"}], 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"a", "[", "3", "]"}], " ", 
+         RowBox[{"b", "[", "2", "]"}]}], "-", 
+        RowBox[{
+         RowBox[{"a", "[", "2", "]"}], " ", 
+         RowBox[{"b", "[", "3", "]"}]}]}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"a", "[", "4", "]"}], " ", 
+         RowBox[{"b", "[", "2", "]"}]}], "-", 
+        RowBox[{
+         RowBox[{"a", "[", "2", "]"}], " ", 
+         RowBox[{"b", "[", "4", "]"}]}]}], ")"}]}]]}]}], "}"}]], "Output",
+ CellChangeTimes->{3.692436458454616*^9, 3.6924397728736773`*^9, 
+  3.692512130319488*^9, 3.692512329194013*^9, 3.6938334783368597`*^9, 
+  3.693833545605588*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"0.04347800000000000275601763632948859595`4.658869471487322", ",", 
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{"a", "[", "4", "]"}], 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"a", "[", "4", "]"}], " ", 
+         RowBox[{"b", "[", "1", "]"}]}], "-", 
+        RowBox[{
+         RowBox[{"a", "[", "1", "]"}], " ", 
+         RowBox[{"b", "[", "4", "]"}]}]}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"a", "[", "4", "]"}], " ", 
+         RowBox[{"b", "[", "2", "]"}]}], "-", 
+        RowBox[{
+         RowBox[{"a", "[", "2", "]"}], " ", 
+         RowBox[{"b", "[", "4", "]"}]}]}], ")"}]}]]}]}], "}"}]], "Output",
+ CellChangeTimes->{3.692436458454616*^9, 3.6924397728736773`*^9, 
+  3.692512130319488*^9, 3.692512329194013*^9, 3.6938334783368597`*^9, 
+  3.693833545650772*^9}],
+
+Cell[BoxData["True"], "Output",
+ CellChangeTimes->{3.692436458454616*^9, 3.6924397728736773`*^9, 
+  3.692512130319488*^9, 3.692512329194013*^9, 3.6938334783368597`*^9, 
+  3.693833545653056*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"T", "[", 
+   RowBox[{"2", ",", "1"}], "]"}], "+", 
+  RowBox[{"T", "[", 
+   RowBox[{"2", ",", "2"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"T", "[", "1", "]"}]}], "Input",
+ CellChangeTimes->{{3.693833549786322*^9, 3.6938335707686357`*^9}}],
+
+Cell[BoxData["0.08822100000000000080691009429756377358`4.665141893887554"], \
+"Output",
+ CellChangeTimes->{{3.693833565015873*^9, 3.69383357120065*^9}}],
+
+Cell[BoxData["0.40136199999999999654676230420591309667`5.624136165408348"], \
+"Output",
+ CellChangeTimes->{{3.693833565015873*^9, 3.693833571201901*^9}}]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1536, 781},
+WindowMargins->{{-8, Automatic}, {Automatic, -8}},
+ShowSelection->True,
+Magnification:>1.25 Inherited,
+FrontEndVersion->"10.4 for Microsoft Windows (64-bit) (April 11, 2016)",
+StyleDefinitions->FrontEnd`FileName[{"Report"}, "StandardReport.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 120, 2, 48, "Input"],
+Cell[CellGroupData[{
+Cell[702, 26, 270, 6, 72, "Input"],
+Cell[975, 34, 583, 8, 27, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1595, 47, 132, 2, 48, "Input"],
+Cell[1730, 51, 2365, 65, 94, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4132, 121, 125, 2, 44, "Subsection"],
+Cell[4260, 125, 207, 4, 38, "Text"],
+Cell[CellGroupData[{
+Cell[4492, 133, 519, 14, 90, "Input"],
+Cell[5014, 149, 264, 5, 48, "Output"],
+Cell[5281, 156, 264, 5, 48, "Output"]
+}, Open  ]],
+Cell[5560, 164, 475, 8, 63, "Text"],
+Cell[CellGroupData[{
+Cell[6060, 176, 2227, 74, 164, "Input"],
+Cell[8290, 252, 334, 8, 69, "Output"],
+Cell[8627, 262, 594, 17, 69, "Output"],
+Cell[9224, 281, 572, 16, 69, "Output"]
+}, Open  ]],
+Cell[9811, 300, 403, 7, 63, "Text"],
+Cell[10217, 309, 1436, 41, 95, "Input"],
+Cell[11656, 352, 102, 1, 38, "Text"],
+Cell[CellGroupData[{
+Cell[11783, 357, 350, 9, 48, "Input"],
+Cell[12136, 368, 481, 12, 48, "Output"]
+}, Open  ]],
+Cell[12632, 383, 314, 7, 38, "Text"],
+Cell[CellGroupData[{
+Cell[12971, 394, 827, 21, 95, "Input"],
+Cell[13801, 417, 189, 6, 66, "Output"],
+Cell[13993, 425, 159, 5, 66, "Output"],
+Cell[14155, 432, 169, 5, 66, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[14373, 443, 127, 2, 44, "Subsection"],
+Cell[14503, 447, 512, 8, 63, "Text"],
+Cell[CellGroupData[{
+Cell[15040, 459, 2295, 61, 141, "Input"],
+Cell[17338, 522, 420, 7, 48, "Output"],
+Cell[17761, 531, 420, 7, 48, "Output"]
+}, Open  ]],
+Cell[18196, 541, 410, 8, 63, "Text"],
+Cell[CellGroupData[{
+Cell[18631, 553, 1485, 39, 164, "Input"],
+Cell[20119, 594, 368, 5, 48, "Output"],
+Cell[20490, 601, 367, 5, 48, "Output"]
+}, Open  ]],
+Cell[20872, 609, 666, 11, 88, "Text"],
+Cell[CellGroupData[{
+Cell[21563, 624, 1782, 45, 95, "Input"],
+Cell[23348, 671, 1644, 40, 69, "Output"]
+}, Open  ]],
+Cell[25007, 714, 233, 5, 38, "Text"],
+Cell[CellGroupData[{
+Cell[25265, 723, 682, 14, 72, "Input"],
+Cell[25950, 739, 797, 11, 48, "Output"],
+Cell[26750, 752, 795, 11, 48, "Output"]
+}, Open  ]],
+Cell[27560, 766, 583, 10, 63, "Text"],
+Cell[CellGroupData[{
+Cell[28168, 780, 2421, 69, 145, "Input"],
+Cell[30592, 851, 500, 10, 48, "Output"]
+}, Open  ]],
+Cell[31107, 864, 183, 4, 38, "Text"],
+Cell[31293, 870, 391, 7, 63, "Text"],
+Cell[31687, 879, 293, 7, 48, "Input"],
+Cell[31983, 888, 105, 1, 38, "Text"],
+Cell[CellGroupData[{
+Cell[32113, 893, 2923, 85, 191, "Input"],
+Cell[35039, 980, 130, 2, 48, "Output"],
+Cell[35172, 984, 131, 2, 48, "Output"]
+}, Open  ]],
+Cell[35318, 989, 719, 11, 88, "Text"],
+Cell[CellGroupData[{
+Cell[36062, 1004, 1403, 43, 72, "Input"],
+Cell[37468, 1049, 1695, 48, 69, "Output"]
+}, Open  ]],
+Cell[39178, 1100, 660, 10, 63, "Text"],
+Cell[CellGroupData[{
+Cell[39863, 1114, 1892, 59, 95, "Input"],
+Cell[41758, 1175, 897, 25, 69, "Output"],
+Cell[42658, 1202, 897, 25, 69, "Output"],
+Cell[43558, 1229, 193, 3, 48, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[43788, 1237, 278, 7, 72, "Input"],
+Cell[44069, 1246, 152, 2, 48, "Output"],
+Cell[44224, 1250, 153, 2, 48, "Output"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
