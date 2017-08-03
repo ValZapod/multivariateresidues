@@ -24,7 +24,7 @@
 (*    along with this program.  If not, see <http://www.gnu.org/licenses/>.*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Begin*)
 
 
@@ -54,11 +54,13 @@ $MultiResSingularPath::usage="The path to Singular (default:''/usr/bin/Singular'
 
 FindMinimumDelta::usage="Option of MultivariateResidue when using the method ''QuotientRingDuality''";
 
+GlobalResidue::usage="Instruction to compute the global residue directly.";
+
 
 Begin["`Private`"]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*CheckInput*)
 
 
@@ -92,7 +94,7 @@ CheckInput[num_,den_List,vars_List,poles_List]:=Module[
 	];
 
 	(* If poles does not have the form {{...},{...},...} (list of lists), then return Null *)
-	If[DeleteDuplicates[Head/@poles]=!={List}||DeleteDuplicates[Length/@poles]=!={Length[vars]},
+	If[(DeleteDuplicates[Head/@poles]=!={List}||DeleteDuplicates[Length/@poles]=!={Length[vars]})&&poles=!={GlobalResidue},
 		Message[CheckInput::poles,poles];
 		Throw[Null];
 	];
@@ -458,7 +460,7 @@ NormalizeLC[expr_,vars_:{}]:=Module[{lc},
 ]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*MultivariateResidues*)
 
 
@@ -522,7 +524,7 @@ MultivariateResidue[num_,den_List,vars_List,poles_List,opts:OptionsPattern[]]:=M
 
 MultivariateResidue::convmat="Error! Conversion matrix between f and g is incorrect. Cannot proceed to calculate the residue w.r.t. the ideal `1`.";
 MultivariateResidue::detA="The conversion matrix between f and g has vanishing determinant, so the residue is zero.";
-MultivariateResidue::poleord="Error in determining the order of the poles. Cannot proceed to calculate the residue w.r.t. the ideal `1`.";
+MultivariateResidue::poleord="Error in determining the order of the poles: the given root `1` seems to be absent in the ideal. Cannot proceed to calculate the residue w.r.t. the ideal `2`. Hint: if the given roots are simplified with certain assumptions, then please specify those assumptions in $Assumptions.";
 
 Options[MultivariateResidue1]={
 	MonomialOrder->Inherited,
@@ -639,7 +641,7 @@ Do[
 	OrderOfPoles=Table[Select[DenFactors,Simplify[First[#]-PoleFactors[[j]]]===0&],{j,1,n}];
 
 	If[DeleteDuplicates[Length/@OrderOfPoles]=!={1},
-		Message[MultivariateResidue::poleord,AngleBracket@@den];
+		Message[MultivariateResidue::poleord,poles[[p,1]],AngleBracket@@den];
 		Throw[Null];
 	];
 	OrderOfPoles=#[[1,2]]&/@OrderOfPoles;
@@ -659,7 +661,7 @@ Do[
 	pos=First/@pos;
 	
 	(* Take derivatives *)
-	t[0]=Together[PoleMonomial/(Times@@g)]*DetA*h;
+	t[0]=Together[PoleMonomial/(Times@@(First/@DenFactors))]*DetA*h;
 	Do[
 		t[i]=D[
 			t[i-1],
@@ -704,7 +706,7 @@ Return[{gb, convmat /. Thread[rvars -> Table[UnitVector[len, j], {j, len}]]}]
 ]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*MultivariateResidues2 (QuotientRingDuality)*)
 
 
@@ -712,12 +714,14 @@ MultivariateResidue::delta="Value of \[Delta] has increased beyond \[Delta]=100.
 MultivariateResidue::inv="Matrix is not invertible! Try setting CoefficientDomain\[Rule]RationalFunctions.";
 MultivariateResidue::unity="Partition of unity does not sum to one.";
 MultivariateResidue::empty="None of the poles `1` are points in the variety of the ideal `2`. Residue is zero.";
-MultivariateResidue::canb="Construction of canonical basis was unsuccesfull.";
+MultivariateResidue::canb="Construction of canonical basis was unsuccessful.";
+MultivariateResidue::missroot="Error: the given roots `1` seem to be absent in the ideal. Hint: if the given roots are simplified with certain assumptions, then please specify those assumptions in $Assumptions.";
 
 Options[MultivariateResidue2]={
 	MonomialOrder->Inherited,
 	CoefficientDomain->Inherited,
-	FindMinimumDelta->Inherited
+	FindMinimumDelta->Inherited,
+	ReturnGlobalResidue->False
 };
 
 MultivariateResidue2[num_,den_,vars_,poles_,opts:OptionsPattern[]]:=Catch[Module[
@@ -731,7 +735,7 @@ MGenerators,GeneratorsOfIntersection,\[Delta],MatrixOfP,ListOfMultiplicities,
 eigenvalues,projectedvariety,
 \[Lambda]Max,DiagonalizabilityTest,PreGeneratorsOfIntersection,e,NumRemainder,\[CapitalLambda]0,\[CapitalLambda],Res,ResList,
 Alist,A,cr,eq0,eq1,J,Lagrange,elist,
-PolyPowRem,PolyRem,PolyRemLex,zeros
+PolyPowRem,PolyRem,PolyRemLex,zeros,missingroots
 },
 
 
@@ -746,15 +750,27 @@ Minimum\[Delta]=OptionValue[FindMinimumDelta];
 Vars=x/@Range[1,Length[vars]];
 Num=num/.Thread[vars->Vars];
 Ideal=den/.Thread[vars->Vars];
-(* Compute the entire variety internally. At the end, connect the results to the user-supplied poles *)
-Variety=DeleteDuplicates[Map[Last,Quiet[Solve[#==0&/@den,vars]],{2}]//Simplify];
-If[Intersection[poles//Simplify,Variety]==={},
-	zeros=Flatten[Table[poles[[i]]-Variety[[j]],{i,1,Length[poles]},{j,1,Length[Variety]}],1];
-	zeros=zeros/.(Rule[#,RandomReal[{7,13},WorkingPrecision->500]]&/@Variables[zeros]);
-	zeros=DeleteDuplicates/@Chop[zeros,0.001];
-	If[!MemberQ[zeros,{0}],
-		Message[MultivariateResidue::empty,poles,AngleBracket@@den];
-		Return[Table[0,{Length[poles]}]];
+
+If[poles==={GlobalResidue},
+	Variety={GlobalResidue};
+];
+
+If[poles=!={GlobalResidue},
+	(* Compute the entire variety internally. At the end, connect the results to the user-supplied poles *)
+	Variety=DeleteDuplicates[Map[Last,Quiet[Solve[#==0&/@den,vars]],{2}]//Simplify];
+	missingroots=Select[poles,!MemberQ[Variety,#]&];
+	If[missingroots=!={},
+	Message[MultivariateResidue::missroot,missingroots];
+	Return[Null];
+	];
+	If[Intersection[poles//Simplify,Variety]==={},
+		zeros=Flatten[Table[poles[[i]]-Variety[[j]],{i,1,Length[poles]},{j,1,Length[Variety]}],1];
+		zeros=zeros/.(Rule[#,RandomReal[{7,13},WorkingPrecision->500]]&/@Variables[zeros]);
+		zeros=DeleteDuplicates/@Chop[zeros,0.001];
+		If[!MemberQ[zeros,{0}],
+			Message[MultivariateResidue::empty,poles,AngleBracket@@den];
+			Return[Table[0,{Length[poles]}]];
+		];
 	];
 ];
 
@@ -790,6 +806,11 @@ eq0=0==#&/@eq0;
 eq1=1==#&/@eq1;
 \[Mu]=Alist/.First[Solve[Join[eq0,eq1],Alist]];
 
+(* When asked for the Global Residue *)
+If[poles==={GlobalResidue},
+	e[1]=1;
+	Goto[ComputeResidue];
+];
 
 (*  Compute Lagrangian interpolation polynomials  *)
 ProjectionVectors[x_]:=Tuples[Range[-x,x],Length[vars]];
@@ -962,10 +983,14 @@ Do[
 
 Do[Res[p]=Factor[Dot[\[CapitalLambda][p],\[Mu]]],{p,1,Length[Variety]}];
 
+(* When asked for the Global Residue *)
+If[poles==={GlobalResidue},
+	Return[Res[1]]
+];
+
 ResList=Table[Res[p],{p,1,Length[Variety]}];
 (* Connect the Residues on each Variety to the requested Residues on the user-supplied poles *)
 ResList=Extract[ResList,Position[Variety,#]]&/@Simplify[poles]/.{{}->{0}}//Flatten;
-
 
 Return[ResList]
 
