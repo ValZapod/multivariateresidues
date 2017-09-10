@@ -24,7 +24,7 @@
 (*    along with this program.  If not, see <http://www.gnu.org/licenses/>.*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Begin*)
 
 
@@ -60,7 +60,7 @@ GlobalResidue::usage="Instruction to compute the global residue directly.";
 Begin["`Private`"]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*CheckInput*)
 
 
@@ -460,7 +460,7 @@ NormalizeLC[expr_,vars_:{}]:=Module[{lc},
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*MultivariateResidues*)
 
 
@@ -518,7 +518,7 @@ MultivariateResidue[num_,den_List,vars_List,poles_List,opts:OptionsPattern[]]:=M
 
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*MultivariateResidues1 (TransformationFormula)*)
 
 
@@ -661,7 +661,7 @@ Do[
 	pos=First/@pos;
 	
 	(* Take derivatives *)
-	t[0]=Together[PoleMonomial/(Times@@(First/@DenFactors))]*DetA*h;
+	t[0]=Together[PoleMonomial/(Times@@((First[#]^Last[#])&/@DenFactors))]*DetA*h;
 	Do[
 		t[i]=D[
 			t[i-1],
@@ -706,7 +706,7 @@ Return[{gb, convmat /. Thread[rvars -> Table[UnitVector[len, j], {j, len}]]}]
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*MultivariateResidues2 (QuotientRingDuality)*)
 
 
@@ -1074,7 +1074,7 @@ DualBasis=PolyRemainder[#,Gx,Vars,MonomialOrder->MonOrd]&/@DualBasisX;
 ];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*End*)
 
 
