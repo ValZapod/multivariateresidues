@@ -518,7 +518,7 @@ MultivariateResidue[num_,den_List,vars_List,poles_List,opts:OptionsPattern[]]:=M
 
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*MultivariateResidues1 (TransformationFormula)*)
 
 
@@ -533,7 +533,7 @@ Options[MultivariateResidue1]={
 
 
 MultivariateResidue1[num_,den_List,vars_List,poles_List,opts:OptionsPattern[]]:=Catch[Module[
-{MonOrd,CoefDom,n,x,X,h,f,param,g,gb,lc,B,C,DetA,zeros,DenFactors,PoleFactors,OrderOfPoles,PoleMonomial,ListOfDerivatives,t,Res,pos},
+{MonOrd,CoefDom,n,x,X,h,f,param,g,gb,lc,B,C,DetA,zeros,DenFactors,DenFactorsCoef,ProductOfGs,PoleFactors,OrderOfPoles,PoleMonomial,ListOfDerivatives,t,Res,pos},
 
 If[$MultiResInputChecks===True,
 	CheckInput[num,den,vars,poles];
@@ -624,8 +624,15 @@ If[Or@@(!FreeQ[DenFactors,Power[#,_]]&/@x),
 	DenFactors={#[[1,1]],Total[Last/@#]}&/@GatherBy[DenFactors,First];
 ];
 
+(* Extract the product of leading coefficients *)
+DenFactorsCoef=Times@@((LC[#[[1]],x]^#[[2]])&/@DenFactors);
+
+(* Normalize all leading coefficients to one *)
 DenFactors={NormalizeLC[#[[1]],x],#[[2]]}&/@DenFactors;
 DenFactors=DenFactors//Simplify;
+
+(* Construct ProductGs = Times@@g which now has the form: Const*(x1-a1)*(x1-b1)*...*(x2-a2)*(x2-b2)*...*(xn-an)*(xn-bn)*... *)
+ProductOfGs=DenFactorsCoef*(Times@@((First[#]^Last[#])&/@DenFactors));
 
 (* Compute residue at each variety *)
 Do[
@@ -661,7 +668,7 @@ Do[
 	pos=First/@pos;
 	
 	(* Take derivatives *)
-	t[0]=Together[PoleMonomial/(Times@@((First[#]^Last[#])&/@DenFactors))]*DetA*h;
+	t[0]=Together[PoleMonomial/ProductOfGs]*DetA*h;
 	Do[
 		t[i]=D[
 			t[i-1],
@@ -758,7 +765,7 @@ If[poles==={GlobalResidue},
 If[poles=!={GlobalResidue},
 	(* Compute the entire variety internally. At the end, connect the results to the user-supplied poles *)
 	Variety=DeleteDuplicates[Map[Last,Quiet[Solve[#==0&/@den,vars]],{2}]//Simplify];
-	missingroots=Select[poles,!MemberQ[Variety,#]&];
+	missingroots=Select[poles//Simplify,!MemberQ[Variety,#]&];
 	If[missingroots=!={},
 	Message[MultivariateResidue::missroot,missingroots];
 	Return[Null];
