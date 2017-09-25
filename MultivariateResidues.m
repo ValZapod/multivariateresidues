@@ -533,7 +533,7 @@ Options[MultivariateResidue1]={
 
 
 MultivariateResidue1[num_,den_List,vars_List,poles_List,opts:OptionsPattern[]]:=Catch[Module[
-{MonOrd,CoefDom,n,x,X,h,f,param,g,gb,lc,B,C,DetA,zeros,DenFactors,DenFactorsCoef,ProductOfGs,PoleFactors,OrderOfPoles,PoleMonomial,ListOfDerivatives,t,Res,pos},
+{MonOrd,CoefDom,n,x,X,h,f,param,Jacs,g,gb,lc,B,C,DetA,zeros,DenFactors,DenFactorsCoef,ProductOfGs,PoleFactors,OrderOfPoles,PoleMonomial,ListOfDerivatives,t,Res,pos},
 
 If[$MultiResInputChecks===True,
 	CheckInput[num,den,vars,poles];
@@ -547,6 +547,13 @@ x=X/@Range[n];
 h=num/.Thread[vars->x];
 f=den/.Thread[vars->x];
 param=Complement[Variables[f],x];
+
+(* If the residue is non-degenerate, compute via Jacobian *)
+Jacs=Det/@((D[den,#]&/@vars)/.(Thread[vars->#]&/@poles));
+Jacs=Jacs//Simplify;
+If[Count[Jacs,0]===0,
+	Return[(num/.(Thread[vars->#]&/@poles))/Jacs];
+];
 
 If[$MultiResUseSingular===True,
 (* USE SINGULAR begin =============================== *)
