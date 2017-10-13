@@ -533,12 +533,11 @@ Options[MultivariateResidue1]={
 
 
 MultivariateResidue1[num_,den_List,vars_List,poles_List,opts:OptionsPattern[]]:=Catch[Module[
-{MonOrd,CoefDom,n,x,X,h,f,param,Jacs,g,gb,lc,B,C,DetA,zeros,DenFactors,DenFactorsCoef,ProductOfGs,PoleFactors,OrderOfPoles,PoleMonomial,ListOfDerivatives,t,Res,pos},
+{MonOrd,CoefDom,n,x,X,h,f,param,Jacs,poleQ,g,gb,lc,B,C,DetA,zeros,DenFactors,DenFactorsCoef,ProductOfGs,PoleFactors,OrderOfPoles,PoleMonomial,ListOfDerivatives,t,Res,pos},
 
 If[$MultiResInputChecks===True,
 	CheckInput[num,den,vars,poles];
 ];
-
 MonOrd=OptionValue[MonomialOrder];
 CoefDom=OptionValue[CoefficientDomain];
 
@@ -552,7 +551,12 @@ param=Complement[Variables[f],x];
 Jacs=Det/@((D[den,#]&/@vars)/.(Thread[vars->#]&/@poles));
 Jacs=Jacs//Simplify;
 If[Count[Jacs,0]===0,
-	Return[(num/.(Thread[vars->#]&/@poles))/Jacs];
+	Res=(num/.(Thread[vars->#]&/@poles))/Jacs;
+	poleQ=den/.(Thread[vars->#]&/@poles)//Simplify;
+	poleQ=DeleteDuplicates/@poleQ;
+	poleQ=If[#==={0},1,0]&/@poleQ;
+	Res=Res*poleQ;
+	Return[Res];
 ];
 
 If[$MultiResUseSingular===True,
