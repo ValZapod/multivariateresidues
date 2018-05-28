@@ -5,7 +5,7 @@
 
 
 (* ::Text:: *)
-(*Copyright 2017, Kasper J. Larsen and Robbert Rietkerk*)
+(*Copyright 2017-2018, Kasper J. Larsen and Robbert Rietkerk*)
 (*This program is distributed under the terms of the GNU General Public License.*)
 
 
@@ -55,6 +55,17 @@ $MultiResSingularPath::usage="The path to Singular (default:''/usr/bin/Singular'
 FindMinimumDelta::usage="Option of MultivariateResidue when using the method ''QuotientRingDuality''";
 
 GlobalResidue::usage="Instruction to compute the global residue directly.";
+
+GlobalResidueTheoremCPn::usage="\
+GlobalResidueTheoremCPn[Num,{d[1],\[Ellipsis],d[n]},{z[1],\[Ellipsis],z[n]}] produces linear relations among residues computed at various locations, \n\
+that follow from the Global Residue Theorem (see Section 5 of the accompanying paper).\n\
+The output takes the form {{Ideal[1],{Variety[1],Residues[1]}}, {Ideal[2],{Variety[2],Residues[2]}}, ...}, where\n\
+Ideal[i] is a list of n+1 denominator factors in terms of homogeneous coordinates w[0],w[1],...,w[n] (in the compactification \!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\[DoubleStruckCapitalP]\), \(n\)]\) of \!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\), \(n\)]\)),\n\
+Variety[i] is a list of N[i] poles (with N[i] an integer), each of which is a point in \!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\), \(n + 1\)]\),\n\
+Residues[i] is a list of N[i] residues of Ideal[i] computed at the N[i] poles in Variety[i].\n\
+Only the non-vanishing terms in the linear relations (i.e. only the non-vanishing residues) are displayed.";
+
+w::usage="Homogeneous coordinate appearing in the output of GlobalResidueTheoremCPn.";
 
 
 Begin["`Private`"]
@@ -628,7 +639,10 @@ DenFactors=FactorList[DenFactors];
 (* If higher powers of any variable appears in the factorlist, then fix this! *)
 If[Or@@(!FreeQ[DenFactors,Power[#,_]]&/@x),
 	(* First factorize the base factors *)
-	DenFactors={Times@@(Flatten[Solve[#[[1]]==0,Intersection[Variables[#[[1]]],x]]]/.{Rule[a_,b_]:>a-b}),#[[2]]}&/@DenFactors[[2;;-1]];
+	DenFactors=Join[
+		DenFactors[[1;;1]],
+		{Times@@(Flatten[Solve[#[[1]]==0,Intersection[Variables[#[[1]]],x]]]/.{Rule[a_,b_]:>a-b}),#[[2]]}&/@DenFactors[[2;;-1]]
+	];
 	(* Then split the base factors containing products into separate base factors *)
 	DenFactors=DenFactors/.({t_Times,n_}:>Sequence@@({#,n}&/@(List@@t)));
 	(* Add up powers of equal base factors that may have been produced *)
@@ -1093,9 +1107,124 @@ DualBasis=PolyRemainder[#,Gx,Vars,MonomialOrder->MonOrd]&/@DualBasisX;
 
 
 (* ::Subsubsection::Closed:: *)
+(*GlobalResidueTheoremCPn*)
+
+
+Quiet[Get["Combinatorica`"]];
+
+GlobalResidueTheoremCPn[Num_,Ideal_,Vars_]:=Module[
+{i,ProjectivizeVars,VarsOfPatch,NormalizePoint,NumeratorDegree,VectorOfDenominatorDegrees,ProjectivizedIdeal,RescalingPower,ProjectivizedNumerator,ListOfDivisors,ProjectivizedIdealFactors,PartitionsOfDivisors,IndicesOfDiscreteDivisorIntersections,PatchVars,IntersectionOfDivisors,PolesInGRT,ResiduesInGRT,PatchLabel,PatchLabels,ResidueAtPole,PositionsOfNonVanishingResidues},
+
+ProjectivizeVars=Table[Vars[[i]]->w[i]/w[0],{i,1,Length[Vars]}];
+Do[(*loop over i*)
+VarsOfPatch[i]=Drop[Table[w[j],{j,0,Length[Vars]}],{i+1}]
+,{i,0,Length[Vars]}
+];
+
+
+NormalizePoint[x_]:=Module[{FirstNonVanishingEntry},
+
+FirstNonVanishingEntry=Min[Flatten[Position[#=!=0&/@x,True]]];
+Return[Simplify[x/x[[FirstNonVanishingEntry]]/.w[FirstNonVanishingEntry-1]->1]];
+];
+
+NumeratorDegree=Max[Total[#[[1]]]&/@CoefficientRules[Num,Vars]];
+
+VectorOfDenominatorDegrees=Table[Max[Total[#[[1]]]&/@CoefficientRules[i,Vars]],{i,Ideal}];
+
+ProjectivizedIdeal=Factor[(Ideal/.ProjectivizeVars)Table[w[0]^i,{i,VectorOfDenominatorDegrees}]];
+
+(*  \[Omega] on patch Subscript[U, i] of CP^n  *)
+(*  ((-1)^iNum)/(w[0]^(Length[Vars]+1+NumeratorDegree-Total[VectorOfDenominatorDegrees])Times@@ProjectivizedIdeal)  *)
+
+RescalingPower=Length[Vars]+1+NumeratorDegree-Total[VectorOfDenominatorDegrees];
+
+If[
+RescalingPower<0,
+ProjectivizedNumerator=w[0]^(-RescalingPower+NumeratorDegree)(Num/.ProjectivizeVars),ProjectivizedNumerator=w[0]^(NumeratorDegree)(Num/.ProjectivizeVars)
+];
+
+ProjectivizedIdealFactors=Select[Power@@#&/@FactorList[Times@@ProjectivizedIdeal],!FreeQ[#,w]&];
+
+If[
+RescalingPower>0,
+ListOfDivisors=Join[{w[0]^RescalingPower},ProjectivizedIdealFactors],ListOfDivisors=ProjectivizedIdealFactors
+];
+
+PartitionsOfDivisors=Map[Times@@#&,KSetPartitions[ListOfDivisors,Length[Vars]],{2}];
+
+IndicesOfDiscreteDivisorIntersections={};
+
+
+Monitor[Do[(*Loop over i*)
+
+
+PatchVars=Reverse[Subsets[Table[w[j],{j,0,Length[Vars]}],{Length[Vars]}]];
+(* For a given partition find the divisors and their intersection *)
+Quiet[
+IntersectionOfDivisors[i]=Union[
+Flatten[
+Table[
+Solve[PartitionsOfDivisors[[i]]==0&&PatchVars[[pv]][[1;;pv-1]]==0,PatchVars[[pv]]]
+,{pv,1,Length[PatchVars]}
+]
+,1]];
+];
+
+If[
+Union[Length/@IntersectionOfDivisors[i]]=!={Length[Vars]},
+Continue[]
+];
+
+IndicesOfDiscreteDivisorIntersections=Join[IndicesOfDiscreteDivisorIntersections,{i}];
+
+PolesInGRT[i]=SortBy[DeleteDuplicates[NormalizePoint[Table[w[j],{j,0,Length[Vars]}]/.#]&/@IntersectionOfDivisors[i]],Reverse];
+
+ResiduesInGRT[i]={};
+
+PatchLabels=(Flatten[Position[#,1]][[1]]-1)&/@PolesInGRT[i];
+PolesInGRT[i]=Transpose[{PolesInGRT[i],PatchLabels}];
+PolesInGRT[i]=GatherBy[PolesInGRT[i],Last];
+
+Do[(* loop over PolesInGRT[i] *)
+PatchLabel=PoleSet[[1,2]];
+
+ResidueAtPole=MultivariateResidue[
+(-1)^PatchLabel*ProjectivizedNumerator/.w[PatchLabel]->1,PartitionsOfDivisors[[i]]/.w[PatchLabel]->1,
+VarsOfPatch[PatchLabel],
+Drop[#,{PatchLabel+1}]&/@First/@PoleSet
+];
+ResidueAtPole=Factor/@ResidueAtPole;
+
+ResiduesInGRT[i]=Join[ResiduesInGRT[i],ResidueAtPole];
+
+,{PoleSet,PolesInGRT[i]}
+];
+PolesInGRT[i]=Flatten[Map[First,PolesInGRT[i],{2}],1];
+PositionsOfNonVanishingResidues[i]=Flatten[Position[#=!=0&/@ResiduesInGRT[i],True]];
+
+,{i,1,Length[PartitionsOfDivisors]}
+],
+ToString[i]<>"/"<>ToString[Length[PartitionsOfDivisors]]
+];
+
+Return[Table[
+{
+PartitionsOfDivisors[[i]],
+{
+PolesInGRT[i][[PositionsOfNonVanishingResidues[i]]],
+ResiduesInGRT[i][[PositionsOfNonVanishingResidues[i]]]
+}
+}
+,{i,IndicesOfDiscreteDivisorIntersections}
+]];
+];
+
+
+(* ::Subsubsection::Closed:: *)
 (*End*)
 
 
 End[];
 EndPackage[];
-Print["MultivariateResidues, Kasper J. Larsen and Robbert Rietkerk (2017)"];
+Print["MultivariateResidues, Kasper J. Larsen and Robbert Rietkerk (2017-2018)"];
