@@ -1106,7 +1106,7 @@ DualBasis=PolyRemainder[#,Gx,Vars,MonomialOrder->MonOrd]&/@DualBasisX;
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*GlobalResidueTheoremCPn*)
 
 
@@ -1141,7 +1141,8 @@ RescalingPower=Length[Vars]+1+NumeratorDegree-Total[VectorOfDenominatorDegrees];
 
 If[
 RescalingPower<0,
-ProjectivizedNumerator=w[0]^(-RescalingPower+NumeratorDegree)(Num/.ProjectivizeVars),ProjectivizedNumerator=w[0]^(NumeratorDegree)(Num/.ProjectivizeVars)
+ProjectivizedNumerator=Expand[w[0]^(-RescalingPower+NumeratorDegree)(Num/.ProjectivizeVars)],
+ProjectivizedNumerator=Expand[w[0]^(NumeratorDegree)(Num/.ProjectivizeVars)]
 ];
 
 ProjectivizedIdealFactors=Select[Power@@#&/@FactorList[Times@@ProjectivizedIdeal],!FreeQ[#,w]&];
